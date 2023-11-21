@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2023. Okt 24. 11:50
+-- Létrehozás ideje: 2023. Nov 21. 11:15
 -- Kiszolgáló verziója: 10.4.20-MariaDB
 -- PHP verzió: 7.3.29
 
@@ -29,9 +29,9 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `altalanos_iskola` (
   `id_altalanos_iskola` tinyint(3) UNSIGNED NOT NULL,
-  `altalanos_iskola_neve` varchar(255) CHARACTER SET utf8 COLLATE utf8_hungarian_ci NOT NULL,
-  `altalanos_iskola_cime` varchar(255) CHARACTER SET utf8 COLLATE utf8_hungarian_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
+  `altalanos_iskola_neve` varchar(255) COLLATE utf8_hungarian_ci NOT NULL,
+  `altalanos_iskola_cime` varchar(255) COLLATE utf8_hungarian_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 --
 -- A tábla adatainak kiíratása `altalanos_iskola`
@@ -39,7 +39,7 @@ CREATE TABLE `altalanos_iskola` (
 
 INSERT INTO `altalanos_iskola` (`id_altalanos_iskola`, `altalanos_iskola_neve`, `altalanos_iskola_cime`) VALUES
 (1, 'Csillagvár Általános Iskola', 'Kocka u. 14.'),
-(2, 'Napsugár Általános Iskola', 'Gyöngyvirág u. 4'),
+(2, 'Napsugár Általános Iskola', 'Gyöngyvirág u. 4.'),
 (3, 'Tóparti Általános Iskola', 'Strand út 23.');
 
 -- --------------------------------------------------------
@@ -52,7 +52,7 @@ CREATE TABLE `jelentkezes` (
   `id_jelentkezes` tinyint(3) UNSIGNED NOT NULL,
   `tanulo_id` tinyint(3) UNSIGNED NOT NULL,
   `kozepiskola_id` tinyint(3) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 --
 -- A tábla adatainak kiíratása `jelentkezes`
@@ -77,9 +77,9 @@ INSERT INTO `jelentkezes` (`id_jelentkezes`, `tanulo_id`, `kozepiskola_id`) VALU
 
 CREATE TABLE `kozepiskola` (
   `id_kozepiskola` tinyint(3) UNSIGNED NOT NULL,
-  `kozepiskola_neve` varchar(255) CHARACTER SET utf8 COLLATE utf8_hungarian_ci NOT NULL,
-  `kozepiskola_cime` varchar(255) CHARACTER SET utf8 COLLATE utf8_hungarian_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
+  `kozepiskola_neve` varchar(255) COLLATE utf8_hungarian_ci NOT NULL,
+  `kozepiskola_cime` varchar(255) COLLATE utf8_hungarian_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 --
 -- A tábla adatainak kiíratása `kozepiskola`
@@ -88,7 +88,7 @@ CREATE TABLE `kozepiskola` (
 INSERT INTO `kozepiskola` (`id_kozepiskola`, `kozepiskola_neve`, `kozepiskola_cime`) VALUES
 (1, 'Zengő Gimnázium', 'Zerge u. 13.'),
 (2, 'Dobogókő Szakközépiskola', 'Sziklás u. 44.'),
-(3, 'Kékes Gimnázium', 'Havas út 51.'),
+(3, 'Kékes Gimnázium', 'Havas út 51'),
 (4, 'Baradla Gimnázium', 'Köves tér 3.');
 
 -- --------------------------------------------------------
@@ -99,9 +99,9 @@ INSERT INTO `kozepiskola` (`id_kozepiskola`, `kozepiskola_neve`, `kozepiskola_ci
 
 CREATE TABLE `tanulo` (
   `id_tanulo` tinyint(3) UNSIGNED NOT NULL,
-  `tanulo_neve` varchar(255) CHARACTER SET utf8 COLLATE utf8_hungarian_ci NOT NULL,
+  `tanulo_neve` varchar(255) COLLATE utf8_hungarian_ci NOT NULL,
   `id_alt_isk` tinyint(3) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 --
 -- A tábla adatainak kiíratása `tanulo`
@@ -128,15 +128,14 @@ ALTER TABLE `altalanos_iskola`
 --
 ALTER TABLE `jelentkezes`
   ADD PRIMARY KEY (`id_jelentkezes`),
-  ADD KEY `kozepiskola_id` (`kozepiskola_id`),
-  ADD KEY `tanulo_id` (`tanulo_id`);
+  ADD KEY `tanulo_id` (`tanulo_id`),
+  ADD KEY `kozepiskola_id` (`kozepiskola_id`);
 
 --
 -- A tábla indexei `kozepiskola`
 --
 ALTER TABLE `kozepiskola`
-  ADD PRIMARY KEY (`id_kozepiskola`),
-  ADD KEY `kozepiskola_cime` (`kozepiskola_cime`);
+  ADD PRIMARY KEY (`id_kozepiskola`);
 
 --
 -- A tábla indexei `tanulo`
@@ -168,6 +167,12 @@ ALTER TABLE `kozepiskola`
   MODIFY `id_kozepiskola` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT a táblához `tanulo`
+--
+ALTER TABLE `tanulo`
+  MODIFY `id_tanulo` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- Megkötések a kiírt táblákhoz
 --
 
@@ -181,8 +186,13 @@ ALTER TABLE `altalanos_iskola`
 -- Megkötések a táblához `jelentkezes`
 --
 ALTER TABLE `jelentkezes`
-  ADD CONSTRAINT `jelentkezes_ibfk_1` FOREIGN KEY (`kozepiskola_id`) REFERENCES `kozepiskola` (`id_kozepiskola`),
-  ADD CONSTRAINT `jelentkezes_ibfk_2` FOREIGN KEY (`tanulo_id`) REFERENCES `tanulo` (`id_tanulo`);
+  ADD CONSTRAINT `jelentkezes_ibfk_1` FOREIGN KEY (`kozepiskola_id`) REFERENCES `kozepiskola` (`id_kozepiskola`);
+
+--
+-- Megkötések a táblához `tanulo`
+--
+ALTER TABLE `tanulo`
+  ADD CONSTRAINT `tanulo_ibfk_1` FOREIGN KEY (`id_tanulo`) REFERENCES `jelentkezes` (`tanulo_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
